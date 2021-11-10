@@ -18,6 +18,7 @@ db.once('open', function() {
 const PORT = process.env.PORT
 app.get('/', (req, res) => res.send('hello'));
 app.get('/books', handleBooks);
+app.post('/books',handlePostBooks)
 
 async function handleBooks (req,res){
 
@@ -34,6 +35,16 @@ try {
   console.error(e);
   res.status(500).send('server error')
 }
+}
+
+async function handlePostBooks(req,res){
+  try{
+    let newBook = await Book.create(req.body)
+    res.status(200).send(newBook);
+
+  }catch(e){
+    res.status(500).send('no book added')
+  }
 }
 
 
