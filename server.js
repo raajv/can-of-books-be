@@ -19,7 +19,7 @@ const PORT = process.env.PORT
 app.get('/', (req, res) => res.send('hello'));
 app.get('/books', handleBooks);
 app.post('/books',handlePostBooks);
-app.delete('/books',handleDelBooks);
+app.delete('/books/:id',handleDelBooks);
 
 async function handleBooks (req,res){
 
@@ -38,26 +38,57 @@ try {
 };
 
 async function handlePostBooks(req,res){
-  try{
-    let newBook = await Book.create(req.body)
-    res.status(200).send(newBook);
-}catch(e){
-    res.status(500).send('no book added')
+  const newBook = { ...req.body, email: req.query.email }
+  
+  try {
+    const successfulBook = await Book.create(newBook);
+    if (successfulBook) {
+      res.status(201).send(successfulBook);
+    } else {
+      res.status(400).send('could not add book');
+    }
+
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('server error');
   }
 }
 
 async function handleDelBooks(req,res){
-const id = req.params.id;
-const email = req.params.email;
-
-const delBook= await Book.findOne({_id: id , email: email});
-if(!delBook){
-  res.status(400).send('no book to del')
-}else{
-  await Book.findByIdAndDelete(id);
-  res.status(200).send('bye book')
+  const id = req.params.id;
+  const email = req.query.email;
+try {
+    const delBook = await Book.findOne({ _id: id, email: email });
+    if (!delBook) {
+      res.status(400).send('could not delete book');
+    } else {
+      await Book.findByIdAndDelete(id);
+      res.status(204).send('book gone ');
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('server error');
+  }
 }
-}
 
+
+async function handlePutBooks(req, res) {
+  /// user is going to send us their email(query) and id(param) new book state via req.body
+  // findByIdAndUpdate takes some arguments
+  // 1 - the id of the record you want to change
+  // 2 - the data you want to replace
+  // 3 - optional - make it completey replace the entry { new: true, overwrite: true }
+  const id = req.params.id;
+  const updatedData = { ...req.body, email: req.query.email }
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true, overwrite: true });
+    // const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true });
+    res.status(200).send(updatedBook)
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('server error');
+  }
+
+}
 
 app.listen(PORT,() =>console.log(`im listening on ${PORT}`) )
