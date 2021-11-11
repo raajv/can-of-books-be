@@ -20,6 +20,7 @@ app.get('/', (req, res) => res.send('hello'));
 app.get('/books', handleBooks);
 app.post('/books',handlePostBooks);
 app.delete('/books/:id',handleDelBooks);
+app.put('/books',handlePutBooks)
 
 async function handleBooks (req,res){
 
