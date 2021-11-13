@@ -82,7 +82,7 @@ async function handlePutBooks(req, res) {
   const id = req.params.id;
   const updatedData = { ...req.body, email: req.query.email }
   try {
-    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true, overwrite: true });
+    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true });
     // const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true });
     res.status(200).send(updatedBook)
   } catch (e) {
