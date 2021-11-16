@@ -63,13 +63,13 @@ async function handlePostBooks(req,res){
   }
 }
 
-function handleDelBooks(req,res){
+function handleDelBooks(request,response){
   verifyUser(request, async(err, user) => {
     if (err) {
       response.send('invalid token');
     } else {
       
-      const id = req.params.id;
+      const id = request.params.id;
       const email = user.email;
     try {
         const delBook = await Book.findOne({ _id: id, email: email });
