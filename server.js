@@ -74,14 +74,14 @@ function handleDelBooks(request,response){
     try {
         const delBook = await Book.findOne({ _id: id, email: email });
         if (!delBook) {
-          res.status(400).send('could not delete book');
+          response.status(400).send('could not delete book');
         } else {
           await Book.findByIdAndDelete(id);
-          res.status(204).send('book gone ');
+          response.status(204).send('book gone ');
         }
       } catch (e) {
         console.log(e);
-        res.status(500).send('server error');
+        response.status(500).send('server error');
       }
     }
   })
